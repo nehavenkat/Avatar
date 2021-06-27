@@ -13,11 +13,11 @@ export default function Avatars(props) {
   const avatarRef = useRef(null);
   const [selectedTab, setSelectedTab] = useState("skinColor");
   const [savedAvatar, setSavedAvatar] = useState([]);
-
-  // useEffect(() =>{
-  //   getSavedAvatar();
-  // },[])
   
+  useEffect(() =>{
+    getSavedAvatar();
+  },[]) // calling the function here
+
   const pieceClicked = (attr, val) => {
     var newAttributes = {
       ...props.value,
@@ -26,11 +26,12 @@ export default function Avatars(props) {
     if (props.onChange) {
       props.onChange(newAttributes);
     }
-  };
+  };// when ever we try to change the color or hair style we are using the Props value
 
   const triggerDownload = (imageBlob, fileName) => {
     FileSaver.saveAs(imageBlob, fileName);
   };
+// the file is downloded as an png image but saving it as SVG
 
   const onDownloadPNG = () => {
     const svgNode = ReactDOM.findDOMNode(avatarRef.current);
@@ -46,7 +47,7 @@ export default function Avatars(props) {
     const svg = new Blob([data], { type: "image/svg+xml" });
     const url = DOMURL.createObjectURL(svg);
 
-    saveAvatarImg(data);
+    saveAvatarImg(data);// storing in the local database( local storage we can store upto 5mb)
 
     img.onload = () => {
       ctx.save();
@@ -61,21 +62,13 @@ export default function Avatars(props) {
     img.src = url;
   };
 
-  // const getSavedAvatar = () => {
-  //   let temp=[];
-  //   if(localStorage.getItem('savedAvatar')){
-  //     temp=JSON.parse(localStorage.getItem('savedAvatar'));
-  //     setSavedAvatar(temp);
-  //     setTimeout(() => {
-  //       console.log('=============temp=======================');
-  //       console.log(temp);
-  //       console.log(savedAvatar);
-  //       console.log('====================================');
-  //     }, 500);
-  //   }else{
-     
-  //   }
-  // };
+  const getSavedAvatar = () => {
+    let temp=[];
+    if(localStorage.getItem('savedAvatar')){
+      temp=JSON.parse(localStorage.getItem('savedAvatar'));
+      setSavedAvatar(temp);
+    }
+  }; // to get the previouslly saved avatar even after we refresh the browser
 
   const saveAvatarImg = (svg) => {
     let temp=[];
@@ -87,7 +80,7 @@ export default function Avatars(props) {
     }
     setSavedAvatar(temp);
     localStorage.setItem('savedAvatar', JSON.stringify(temp));
-  };
+  };// we are saving the new avatar image 
 
   return (
     <Container fluid="md" style={{marginTop:100}}>
@@ -107,7 +100,8 @@ export default function Avatars(props) {
                 ref={avatarRef}
                 style={{ width: "200px", height: "200px" }}
                 {...props.value}
-              />
+              />{/* the image which is coming from the Avatar plugin*/}
+              
             </StyledAvatar>
           </Col>
           <Col xs lg="2"></Col>
@@ -128,8 +122,8 @@ export default function Avatars(props) {
                             <Nav.Link eventKey={option.label}>{option.label}</Nav.Link>
                           </Nav.Item>
                         );
-                      })}
-
+                      })} {/* Keys help React identify which items have changed, are added, or are removed. Keys should be given to the elements inside the array to give the elements a stable identity */}
+                    
                     <Nav.Item key={`nav-last-${Math.floor(Math.random() * (1000 - 2) + 2)}`}>
                       <Nav.Link eventKey="savedAvatar">Saved Avatar</Nav.Link>
                     </Nav.Item>
@@ -154,7 +148,7 @@ export default function Avatars(props) {
                                   onClick={() => pieceClicked("hatColor", colorName)}
                                 ></Color>
                               );
-                            })}
+                            })} {/* to change the color of the skin */}
 
                             {item.values.map((val) => {
                               var attr = {};
@@ -170,7 +164,7 @@ export default function Avatars(props) {
                                   )}
                                 </Pieces>
                               );
-                            })}
+                            })}  {/* getting the styles to be changed to the avatar from the Pieces plugin */}
                       </Tab.Pane>
 
                        {item.colors && (item.type !== "top" || item.hats.indexOf(props.value.topType) === -1) && props.value.topType !== "Eyepatch" &&  props.value.topType !== "LongHairShavedSides" && props.value.topType !== "LongHairFrida" && (
@@ -193,7 +187,7 @@ export default function Avatars(props) {
                                   onClick={() =>
                                     pieceClicked(item.colorAttribute, colorName)
                                   }></Color>
-                              ))}
+                              ))}{/*changing the color of the hair*/}
                             </ColorContainer>
                           </Tab.Pane>
                         ) }
@@ -207,6 +201,7 @@ export default function Avatars(props) {
                               <div className="genrated-avatar" dangerouslySetInnerHTML={{__html: item.img}}></div>
                             </Col>
                         ))}
+                        {/*the saved images are place here*/}
                       </Row>     
                     </Tab.Pane>
                   </Tab.Content>
@@ -229,7 +224,8 @@ export default function Avatars(props) {
         width="528"
         height="560"
         ref={canvasRef}
-      />
+      /> 
+      {/* with the help of canvas we are generating png image*/}
     </Container>
   );
 }
