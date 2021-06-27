@@ -1,0 +1,9 @@
+{
+  "short_name": "React Avatar",
+  "name": "React Avatar",
+  "icons": [],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#848484",
+  "background_color": "#ffffff"
+}
