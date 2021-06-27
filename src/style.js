@@ -79,7 +79,7 @@ export const Button = styled.button(
     }
     > svg {
       fill: #e6e6ee;
-      height: 20px;
+      height: 20px; 
     }
     > svg:hover {
       color: #fff;
