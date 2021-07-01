@@ -9,29 +9,26 @@ import {Button,ColorContainer,StyledAvatar,Pieces,Color,None} from "./style";
 import { Container, Row , Col, Card, Tab ,Nav} from 'react-bootstrap';
 
 export default function Avatars(props) {
-  const canvasRef = useRef(null);
+  const canvasRef = useRef(null);// value is empty but defined(not zero)
   const avatarRef = useRef(null);
-  const [selectedTab, setSelectedTab] = useState("skinColor");
-  const [savedAvatar, setSavedAvatar] = useState([]);
+  const [selectedTab, setSelectedTab] = useState("skinColor");// we can use either hair/ skin or anyother
+  const [savedAvatar, setSavedAvatar] = useState([]);// getting records from local storage.
   
   useEffect(() =>{
     getSavedAvatar();
-  },[]) // calling the function here
+  },[]) // calling the function here automatically
 
   const pieceClicked = (attr, val) => {
     var newAttributes = {
       ...props.value,
-      [attr]: val,
+      [attr]: val,// to change the particular attribute we write this way
     };
     if (props.onChange) {
       props.onChange(newAttributes);
     }
   };// when ever we try to change the color or hair style we are using the Props value
 
-  const triggerDownload = (imageBlob, fileName) => {
-    FileSaver.saveAs(imageBlob, fileName);
-  };
-// the file is downloded as an png image but saving it as SVG
+
 
   const onDownloadPNG = () => {
     const svgNode = ReactDOM.findDOMNode(avatarRef.current);
@@ -40,7 +37,7 @@ export default function Avatars(props) {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     const anyWindow = window;
-    const DOMURL = anyWindow.URL || anyWindow.webkitURL || window;
+    const DOMURL = anyWindow.URL || anyWindow.webkitURL || window;// different type of browsers
 
     const data = svgNode.outerHTML;
     const img = new Image();
@@ -62,6 +59,12 @@ export default function Avatars(props) {
     img.src = url;
   };
 
+    // the file is downloded as an png image but saving it as SVG
+  const triggerDownload = (imageBlob, fileName) => {
+    FileSaver.saveAs(imageBlob, fileName);
+  };
+
+// local storage is a Database name storing inside key value pair
   const getSavedAvatar = () => {
     let temp=[];
     if(localStorage.getItem('savedAvatar')){
@@ -79,7 +82,8 @@ export default function Avatars(props) {
       temp.push({img:svg, id:(temp.length+1)});
     }
     setSavedAvatar(temp);
-    localStorage.setItem('savedAvatar', JSON.stringify(temp));
+    //The JSON. stringify() method converts a JavaScript object or value to a JSON string
+    localStorage.setItem('savedAvatar', JSON.stringify(temp)); 
   };// we are saving the new avatar image 
 
   return (
@@ -88,7 +92,9 @@ export default function Avatars(props) {
       <Row className="justify-content-md-center mt-3">
           <Col xs md={6}></Col>
           <Col md="auto"  className="text-right">
-              <Button size="sm" onClick={onDownloadPNG} style={{minWidth:100, fontSize:16, backgroundColor:'green'}} variant="danger">Save</Button>{' '}
+              <Button size="sm" onClick={onDownloadPNG} 
+              style={{minWidth:100, fontSize:16, backgroundColor:'green'}} 
+              variant="danger">Save</Button>{' '}
           </Col>
       </Row>
 
@@ -118,23 +124,30 @@ export default function Avatars(props) {
                   <Nav variant="pills" className="flex-column">
                       {map(options, (option) => {
                         return (
-                          <Nav.Item key={`nav-${Math.floor(Math.random() * (1000 - 3) + 3)}`} onClick={() => setSelectedTab(option.type)}  type={option.type}>
+                          <Nav.Item key={`nav-${Math.floor(Math.random() * (1000 - 3) + 3)}`} 
+                          onClick={() => setSelectedTab(option.type)} 
+                           type={option.type}>
                             <Nav.Link eventKey={option.label}>{option.label}</Nav.Link>
                           </Nav.Item>
                         );
-                      })} {/* Keys help React identify which items have changed, are added, or are removed. Keys should be given to the elements inside the array to give the elements a stable identity */}
+                      })} {/* Keys help React identify which items have changed, are added, or are removed.
+                       Keys should be given to the elements inside the array to give the elements a stable identity */}
                     
                     <Nav.Item key={`nav-last-${Math.floor(Math.random() * (1000 - 2) + 2)}`}>
                       <Nav.Link eventKey="savedAvatar">Saved Avatar</Nav.Link>
                     </Nav.Item>
                   </Nav>
                 </Col>
+                
                 <Col md={9}>
                   <Tab.Content>
                     {options.map((item, k) => (
                       <>
                       <Tab.Pane eventKey={item.label}>
-                         {item.hatColors && item.hats.indexOf(props.value.topType) !== -1 && props.value.topType !== "Hat" && map(item.hatColors, (color, colorName) => {
+                         {item.hatColors && 
+                         item.hats.indexOf(props.value.topType) !== -1 
+                         && props.value.topType !== "Hat" && 
+                         map(item.hatColors, (color, colorName) => {
                               return (
                                 <Color
                                   key={`tab-pane-${Math.floor(Math.random() * (1000 - 1) + 1)}`}
@@ -157,7 +170,8 @@ export default function Avatars(props) {
                                 attr.style = { transform: item.transform };
                               }
                               return (
-                                <Pieces key={`hair-${Math.floor(Math.random() * (1000 - 1) + 1)}`} onClick={() => pieceClicked(item.attribute, val)}>
+                                <Pieces key={`hair-${Math.floor(Math.random() * (1000 - 1) + 1)}`} 
+                                onClick={() => pieceClicked(item.attribute, val)}>
                                  <Piece pieceSize="50" pieceType={item.type} {...attr} />
                                   {(val === "Blank" || val === "NoHair") && (
                                     <None>(None)</None>
@@ -167,7 +181,11 @@ export default function Avatars(props) {
                             })}  {/* getting the styles to be changed to the avatar from the Pieces plugin */}
                       </Tab.Pane>
 
-                       {item.colors && (item.type !== "top" || item.hats.indexOf(props.value.topType) === -1) && props.value.topType !== "Eyepatch" &&  props.value.topType !== "LongHairShavedSides" && props.value.topType !== "LongHairFrida" && (
+                       {item.colors && 
+                       (item.type !== "top" || item.hats.indexOf(props.value.topType) === -1) && 
+                       props.value.topType !== "Eyepatch" &&  
+                       props.value.topType !== "LongHairShavedSides" && 
+                       props.value.topType !== "LongHairFrida" && (
                           <Tab.Pane eventKey={item.label}>
                             <ColorContainer className="float-left">
                               {map(item.colors, (color, colorName) =>(
@@ -198,7 +216,8 @@ export default function Avatars(props) {
                       <Row>
                         {savedAvatar.map((item, index)=>(
                             <Col key={`abc-${Math.floor(Math.random() * (1000 - 2) + 2)}`} md={2}>
-                              <div className="genrated-avatar" dangerouslySetInnerHTML={{__html: item.img}}></div>
+                              <div className="genrated-avatar" //binding inside a inner HTML.
+                              dangerouslySetInnerHTML={{__html: item.img}}></div>
                             </Col>
                         ))}
                         {/*the saved images are place here*/}
